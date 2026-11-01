@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>PokéChase Japan! 🗾</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800;900&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #09111E;
+  --card: #111E2E;
+  --card2: #172438;
+  --card3: #1C2D42;
+  --border: rgba(255,255,255,0.07);
+  --yellow: #FFD166;
+  --coral: #EF7C5A;
+  --mint: #06D6A0;
+  --sky: #4CC9F0;
+  --purple: #9B5DE5;
+  --red: #E63946;
+  --white: #FFFFFF;
+  --muted: #6080A0;
+  --shadow: rgba(0,0,0,0.5);
+  --pokered: #D00;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100vh;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--white);overflow-x:hidden;}
+
+/* ── STARFIELD ── */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(1px 1px at 8% 15%,rgba(255,255,255,0.7) 0%,transparent 100%),
+    radial-gradient(1px 1px at 22% 72%,rgba(255,255,255,0.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 45% 8%, rgba(255,255,255,0.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 67% 88%,rgba(255,255,255,0.4) 0%,transparent 100%),
+    radial-gradient(1px 1px at 82% 30%,rgba(255,255,255,0.6) 0%,transparent 100%),
+    radial-gradient(1px 1px at 15% 90%,rgba(255,255,255,0.5) 0%,transparent 100%),
+    radial-gradient(1px 1px at 93% 55%,rgba(255,255,255,0.4) 0%,transparent 100%),
+    radial-gradient(2px 2px at 55% 45%,rgba(76,201,240,0.35) 0%,transparent 100%),
+    radial-gradient(2px 2px at 35% 35%,rgba(155,93,229,0.25) 0%,transparent 100%),
+    radial-gradient(3px 3px at 75% 20%,rgba(255,209,102,0.2) 0%,transparent 100%);
+}
+
+.app{
+  position:relative;z-index:1;
+  max-width:480px;margin:0 auto;
+  padding:12px 13px 50px;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+}
+
+/* ── HEADER ── */
+.header{width:100%;text-align:center;padding:8px 0 10px;}
+.header h1{font-family:'Baloo 2',cursive;font-size:1.85rem;color:var(--white);line-height:1;}
+.header h1 .pk{color:var(--yellow);}
+.header h1 .jp{color:var(--coral);}
+.tagline{font-size:0.76rem;font-weight:700;color:var(--muted);margin-top:1px;}
+
+/* ── KEYFRAMES ── */
+@keyframes popIn   {from{opacity:0;transform:scale(0.88)}to{opacity:1;transform:scale(1)}}
+@keyframes slideUp {from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float   {0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes floatR  {0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
+@keyframes wobble  {0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+@keyframes digPulse{0%,100%{opacity:1}50%{opacity:0.45}}
+@keyframes blink   {0%,100%{opacity:1}50%{opacity:0.1}}
+@keyframes glowH   {0%,100%{filter:drop-shadow(0 0 5px #EF7C5A)drop-shadow(0 0 12px #EF7C5A)}50%{filter:drop-shadow(0 0 16px #EF7C5A)drop-shadow(0 0 30px #EF7C5A)}}
+@keyframes glowM   {0%,100%{filter:drop-shadow(0 0 5px #4CC9F0)drop-shadow(0 0 12px #4CC9F0)}50%{filter:drop-shadow(0 0 16px #4CC9F0)drop-shadow(0 0 30px #4CC9F0)}}
+@keyframes chipShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes ballArc {
+  0%  {transform:translate(0,0)   scale(1)   rotate(0deg);  opacity:1;}
+  35% {transform:translate(50px,-90px) scale(1.25) rotate(200deg); opacity:1;}
+  65% {transform:translate(15px,5px)  scale(0.9)  rotate(380deg); opacity:1;}
+  100%{transform:translate(15px,5px)  scale(0.9)  rotate(380deg); opacity:1;}
+}
+@keyframes ballWiggle{
+  0%  {transform:translate(15px,5px) rotate(18deg);}
+  25% {transform:translate(15px,5px) rotate(-18deg);}
+  50% {transform:translate(15px,5px) rotate(12deg);}
+  75% {transform:translate(15px,5px) rotate(-12deg);}
+  100%{transform:translate(15px,5px) rotate(18deg);}
+}
+@keyframes ballOpen{
+  0%  {transform:translate(15px,5px) scale(0.9) rotate(380deg);opacity:1;}
+  40% {transform:translate(15px,5px) scale(1.3) rotate(400deg);opacity:1;}
+  100%{transform:translate(15px,5px) scale(0) rotate(430deg);opacity:0;}
+}
+@keyframes pkEscape{0%{opacity:1;transform:scale(1) translateY(0)}100%{opacity:0;transform:scale(0.2) translateY(-50px)}}
+@keyframes pkCaught{0%{opacity:1;transform:scale(1)}50%{opacity:0.7;transform:scale(0.5)}100%{opacity:0;transform:scale(0)}}
+@keyframes burstRing{0%{transform:scale(0);opacity:1}100%{transform:scale(3.5);opacity:0}}
+@keyframes sparkle{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(0);opacity:0}}
+@keyframes catchReveal{from{opacity:0;transform:scale(0.7) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+@keyframes trainPuff{0%{opacity:0.8;transform:translateX(0) scale(1)}100%{opacity:0;transform:translateX(-20px) scale(1.5)}}
+
+/* ── CARDS ── */
+.card{background:var(--card);border-radius:20px;border:1.5px solid var(--border);box-shadow:0 8px 28px var(--shadow);width:100%;padding:16px 14px;margin-bottom:12px;}
+.card.glow-yellow{border-color:rgba(255,209,102,0.35);box-shadow:0 8px 28px var(--shadow),0 0 20px rgba(255,209,102,0.1);}
+.card.glow-mint  {border-color:rgba(6,214,160,0.35);  box-shadow:0 8px 28px var(--shadow),0 0 20px rgba(6,214,160,0.1);}
+.card.glow-purple{border-color:rgba(155,93,229,0.35); box-shadow:0 8px 28px var(--shadow),0 0 20px rgba(155,93,229,0.1);}
+
+/* ════════════════════════════════════════
+   HUB SCREEN
+   ════════════════════════════════════════ */
+.hub-screen{width:100%;animation:popIn 0.45s cubic-bezier(.175,.885,.32,1.275);}
+
+/* Story banner */
+.story-banner{
+  background:linear-gradient(135deg,#1A2E44,#0D1B2A);
+  border:2px solid rgba(255,209,102,0.28);
+  border-radius:20px;padding:18px 14px;
+  text-align:center;margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+.story-banner::after{
+  content:'🗾';position:absolute;right:-8px;bottom:-8px;
+  font-size:6rem;opacity:0.06;
+}
+.story-banner .sb-icon{font-size:3rem;margin-bottom:6px;animation:float 3s ease-in-out infinite;display:block;}
+.story-banner h2{font-family:'Baloo 2',cursive;font-size:1.35rem;color:var(--yellow);margin-bottom:6px;}
+.story-banner p{font-size:0.82rem;color:#9ABDD8;font-weight:700;line-height:1.55;}
+.story-banner p .hl {color:var(--yellow);}
+.story-banner p .hlr{color:var(--coral);}
+
+/* Caught box */
+.caught-box{background:var(--card2);border-radius:16px;padding:12px 12px 8px;margin-bottom:12px;border:1.5px solid var(--border);}
+.caught-box-title{font-family:'Baloo 2',cursive;font-size:0.82rem;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.caught-box-title .cb-count{
+  margin-left:auto;
+  font-size:0.78rem;font-weight:800;
+  background:linear-gradient(135deg,var(--yellow),var(--coral));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.pokedex-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;}
+.dex-slot{
+  aspect-ratio:1;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;
+  border:1.5px solid rgba(255,255,255,0.06);
+  background:rgba(255,255,255,0.03);
+  position:relative;
+  transition:all 0.3s;
+}
+.dex-slot.caught-slot{
+  background:rgba(255,209,102,0.08);
+  border-color:rgba(255,209,102,0.3);
+  animation:float 3s ease-in-out infinite;
+}
+.dex-slot.caught-slot:nth-child(2){animation-delay:0.3s;}
+.dex-slot.caught-slot:nth-child(3){animation-delay:0.6s;}
+.dex-slot.caught-slot:nth-child(4){animation-delay:0.9s;}
+.dex-slot.empty-slot{filter:grayscale(1);opacity:0.25;}
+.dex-slot .dex-ball{
+  width:22px;height:22px;
+  background:linear-gradient(180deg,var(--pokered) 50%,white 50%);
+  border-radius:50%;border:1.5px solid rgba(0,0,0,0.4);
+  position:relative;
+}
+.dex-slot .dex-ball::after{
+  content:'';position:absolute;
+  width:6px;height:6px;border-radius:50%;
+  background:white;border:1.5px solid rgba(0,0,0,0.3);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+}
+.dex-slot .caught-badge{
+  position:absolute;bottom:-3px;right:-3px;
+  font-size:0.55rem;background:var(--mint);
+  border-radius:50%;width:14px;height:14px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 1px 4px rgba(0,0,0,0.4);
+}
+.dex-slot .dex-name{
+  position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);
+  font-size:0.52rem;font-weight:800;color:var(--muted);white-space:nowrap;
+}
+
+/* Pokémon pick */
+.pick-label{font-family:'Baloo 2',cursive;font-size:0.95rem;color:var(--muted);text-align:center;margin-bottom:9px;}
+.pokemon-scroll{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.pk-btn{
+  background:var(--card2);border:2px solid var(--border);border-radius:14px;
+  padding:12px 6px;text-align:center;cursor:pointer;
+  transition:all 0.2s;-webkit-tap-highlight-color:transparent;
+  position:relative;
+}
+.pk-btn:hover{border-color:var(--yellow);transform:translateY(-2px);}
+.pk-btn.selected{border-color:var(--yellow);background:rgba(255,209,102,0.08);}
+.pk-btn.already-caught{border-color:var(--mint);background:rgba(6,214,160,0.06);opacity:0.65;cursor:default;}
+.pk-btn.already-caught::after{content:'✅';position:absolute;top:4px;right:6px;font-size:0.75rem;}
+.pk-btn .pk-em{font-size:2.4rem;margin-bottom:3px;}
+.pk-btn .pk-nm{font-family:'Baloo 2',cursive;font-size:0.88rem;color:var(--white);}
+.pk-btn .pk-tp{font-size:0.62rem;font-weight:700;color:var(--muted);}
+
+/* Clock mode row */
+.clock-row{display:flex;gap:8px;margin-bottom:12px;}
+.ck-btn{
+  flex:1;background:var(--card2);border:2px solid var(--border);border-radius:13px;
+  padding:11px 6px;text-align:center;cursor:pointer;
+  transition:all 0.2s;-webkit-tap-highlight-color:transparent;
+}
+.ck-btn:hover{border-color:var(--sky);transform:translateY(-2px);}
+.ck-btn.selected{border-color:var(--sky);background:rgba(76,201,240,0.08);}
+.ck-btn .ck-ic{font-size:1.6rem;margin-bottom:3px;}
+.ck-btn .ck-nm{font-family:'Baloo 2',cursive;font-size:0.88rem;color:var(--white);}
+.ck-btn .ck-ds{font-size:0.62rem;font-weight:700;color:var(--muted);}
+
+.go-btn{
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,var(--yellow),#FFA500);
+  color:#1A1A00;font-family:'Baloo 2',cursive;font-size:1.25rem;
+  border:none;border-radius:17px;cursor:pointer;
+  box-shadow:0 5px 0 #B07000,0 7px 22px rgba(255,209,102,0.3);
+  transition:all 0.15s;-webkit-tap-highlight-color:transparent;
+}
+.go-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #B07000;}
+.go-btn:disabled{opacity:0.38;cursor:default;}
+
+/* ════════════════════════════════════════
+   CHASE SCREEN
+   ════════════════════════════════════════ */
+.chase-screen{width:100%;animation:slideUp 0.35s ease;}
+
+/* Journey map */
+.journey-card{
+  background:var(--card);border:1.5px solid var(--border);
+  border-radius:17px;padding:13px 14px;margin-bottom:11px;
+}
+.jc-header{font-family:'Baloo 2',cursive;font-size:0.82rem;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.jc-train{color:var(--sky);}
+.station-row{display:flex;align-items:flex-start;width:100%;}
+.station-node{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;z-index:1;}
+.station-dot{
+  width:15px;height:15px;border-radius:50%;
+  background:rgba(255,255,255,0.12);border:2px solid rgba(255,255,255,0.12);
+  margin-bottom:5px;transition:all 0.4s;flex-shrink:0;
+}
+.station-dot.past   {background:var(--mint);border-color:var(--mint);}
+.station-dot.current{background:var(--yellow);border-color:var(--yellow);box-shadow:0 0 10px var(--yellow);animation:float 1.5s ease-in-out infinite;}
+.station-line{height:3px;flex:1;background:rgba(255,255,255,0.08);margin-top:6px;z-index:0;}
+.station-line.past{background:var(--mint);}
+.stn-name{font-size:0.54rem;font-weight:800;color:var(--muted);text-align:center;max-width:50px;line-height:1.2;}
+.stn-name.cur{color:var(--yellow);}
+
+/* Intel */
+.intel-card{
+  background:linear-gradient(135deg,rgba(155,93,229,0.12),rgba(76,201,240,0.08));
+  border:1.5px solid rgba(155,93,229,0.28);
+  border-radius:17px;padding:13px 14px;margin-bottom:11px;
+}
+.intel-title{font-family:'Baloo 2',cursive;font-size:0.82rem;color:var(--purple);margin-bottom:9px;}
+.intel-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.intel-row:last-child{margin-bottom:0;}
+.il{font-size:0.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;}
+.iv{font-family:'Baloo 2',cursive;font-size:0.95rem;color:var(--white);}
+.iv.sk{color:var(--sky);}
+.iv.ye{color:var(--yellow);}
+
+/* Clock card */
+.clock-card{
+  background:var(--card);border:1.5px solid var(--border);
+  border-radius:20px;padding:14px 13px 13px;margin-bottom:11px;
+}
+.ctl{font-family:'Baloo 2',cursive;font-size:0.82rem;color:var(--muted);text-align:center;margin-bottom:9px;}
+.step-pills{display:flex;justify-content:center;gap:7px;margin-bottom:11px;}
+.step-pill{
+  font-size:0.7rem;font-weight:800;color:#3A5070;
+  padding:5px 11px;border-radius:20px;
+  background:rgba(255,255,255,0.04);border:1.5px solid transparent;transition:all 0.3s;
+}
+.step-pill.ah{color:white;background:rgba(239,124,90,0.22);border-color:var(--coral);}
+.step-pill.am{color:white;background:rgba(76,201,240,0.18);border-color:var(--sky);}
+.step-pill.dn{color:var(--mint);background:rgba(6,214,160,0.1);border-color:rgba(6,214,160,0.28);}
+
+/* Analogue clock */
+.analogue-wrap{display:flex;justify-content:center;padding:4px 0;}
+svg.clock-face{width:250px;height:250px;max-width:100%;overflow:visible;filter:drop-shadow(0 6px 24px rgba(0,0,0,0.55));}
+.hh-g{animation:glowH 1.1s ease-in-out infinite;}
+.mh-g{animation:glowM 1.1s ease-in-out infinite;}
+
+/* Digital clock */
+.digital-wrap{display:flex;justify-content:center;padding:9px 0;}
+.digital-display{
+  background:#040C16;border-radius:14px;padding:13px 20px;
+  display:inline-flex;align-items:center;gap:3px;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,0.7),0 5px 18px rgba(0,0,0,0.4);
+  border:2px solid rgba(76,201,240,0.12);
+}
+.ds{font-family:'Baloo 2',cursive;font-size:2.9rem;line-height:1;color:#4CC9F0;letter-spacing:2px;transition:all 0.3s;}
+.ds.dim  {color:rgba(76,201,240,0.14);}
+.ds.gh   {color:var(--coral);text-shadow:0 0 14px var(--coral),0 0 28px rgba(239,124,90,0.5);animation:digPulse 1.1s ease-in-out infinite;}
+.ds.gm   {color:var(--sky);  text-shadow:0 0 14px var(--sky),  0 0 28px rgba(76,201,240,0.5);  animation:digPulse 1.1s ease-in-out infinite;}
+.dc{font-family:'Baloo 2',cursive;font-size:2.7rem;color:rgba(76,201,240,0.35);line-height:1;animation:blink 1s step-end infinite;}
+
+/* Choices */
+.choices-sec{width:100%;}
+.choices-prompt{font-family:'Baloo 2',cursive;font-size:0.95rem;color:var(--white);text-align:center;margin-bottom:9px;}
+.choices-prompt .hlh{color:var(--coral);}
+.choices-prompt .hlm{color:var(--sky);}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;}
+.chip{
+  background:var(--card2);border:2px solid rgba(255,255,255,0.07);border-radius:13px;
+  padding:13px 5px;text-align:center;cursor:pointer;
+  transition:all 0.2s;-webkit-tap-highlight-color:transparent;
+}
+/* Hover only for real mouse pointers — touch screens keep a "sticky" hover
+   on whatever sits under the last tap, which made the new chip look selected */
+@media (hover:hover) and (pointer:fine){
+  .choice-grid:not(.no-hover) .chip:hover{border-color:var(--sky);transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,0.35);}
+}
+.chip:focus{outline:none;}
+.chip:active{transform:scale(0.95);}
+.chip .cv{font-family:'Baloo 2',cursive;font-size:1.45rem;color:var(--white);}
+.chip .cs{font-size:0.63rem;font-weight:700;color:var(--muted);margin-top:1px;}
+.chip.locked{pointer-events:none;}
+
+/* Speed dots */
+.speed-dots{display:flex;gap:4px;justify-content:center;margin-bottom:10px;}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--mint);transition:background 1s;}
+.sdot.warn{background:var(--yellow);}
+.sdot.dim {background:rgba(255,255,255,0.08);}
+
+/* redo hint */
+.redo-hint{text-align:center;font-size:0.78rem;font-weight:800;color:var(--purple);margin-bottom:7px;animation:digPulse 1s ease-in-out infinite;}
+
+/* Wrong card */
+.wrong-card{
+  background:linear-gradient(135deg,rgba(230,57,70,0.14),rgba(230,57,70,0.04));
+  border:1.5px solid rgba(230,57,70,0.38);
+  border-radius:18px;padding:18px 14px;text-align:center;margin-bottom:12px;
+  animation:popIn 0.4s cubic-bezier(.175,.885,.32,1.275);
+}
+.wrong-card .we{font-size:3rem;margin-bottom:8px;}
+.wrong-card h3{font-family:'Baloo 2',cursive;font-size:1.15rem;color:var(--red);margin-bottom:5px;}
+.wrong-card p{font-size:0.8rem;font-weight:700;color:#B09090;line-height:1.5;}
+.wrong-card .ct{font-family:'Baloo 2',cursive;font-size:1.5rem;color:var(--white);margin:8px 0;}
+.wrong-card .ct .rh{color:var(--coral);}
+.wrong-card .ct .rm{color:var(--sky);}
+.continue-btn{
+  margin-top:12px;width:100%;padding:12px;
+  background:linear-gradient(135deg,#1E3050,#12223A);color:var(--white);
+  font-family:'Baloo 2',cursive;font-size:1.05rem;
+  border:none;border-radius:13px;cursor:pointer;
+  box-shadow:0 4px 0 #080E1A;transition:all 0.15s;-webkit-tap-highlight-color:transparent;
+}
+.continue-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #080E1A;}
+
+/* ════════════════════════════════════════
+   THROW TRANSITION SCREEN
+   Full self-contained: arena + result revealed inline
+   ════════════════════════════════════════ */
+#root{width:100%;}
+.throw-screen{width:100%;animation:popIn 0.35s cubic-bezier(.175,.885,.32,1.275);}
+
+/* Arena stage */
+.throw-arena{
+  background:radial-gradient(ellipse at 50% 38%,rgba(76,201,240,0.13),transparent 62%),
+             linear-gradient(180deg,#081422,#0F1C2C);
+  border:1.5px solid rgba(76,201,240,0.2);
+  border-radius:22px;
+  padding:20px 14px 18px;
+  text-align:center;
+  margin-bottom:12px;
+  position:relative;
+  overflow:hidden;
+  min-height:320px;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+}
+/* Platform */
+.throw-arena::before{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:34px;
+  background:linear-gradient(180deg,transparent,rgba(255,255,255,0.03));
+  border-top:1px dashed rgba(255,255,255,0.07);
+}
+.arena-top{width:100%;}
+.arena-loc{font-size:0.68rem;font-weight:700;color:var(--muted);margin-bottom:3px;}
+.arena-stn{font-family:'Baloo 2',cursive;font-size:0.9rem;color:var(--yellow);}
+
+/* Pokémon emoji — big, centred, animated via JS class swaps */
+#throwPk{
+  font-size:5.5rem;line-height:1;
+  display:block;margin:0 auto;
+  transition:opacity 0.3s,transform 0.4s;
+  will-change:transform,opacity;
+}
+#throwPk.pk-float  {animation:floatR 2.2s ease-in-out infinite;}
+#throwPk.pk-shrink {animation:pkCaught 0.55s ease forwards;}
+#throwPk.pk-escape {animation:pkEscape 0.8s ease forwards;}
+
+/* Pokéball — positioned absolutely so JS can animate x/y */
+#throwBallWrap{
+  position:relative;
+  width:64px;height:64px;
+  margin:0 auto;
+  flex-shrink:0;
+  transition:none;
+  will-change:transform;
+}
+#throwBallSvg{display:block;width:64px;height:64px;}
+#ballBurst{
+  position:absolute;inset:0;border-radius:50%;
+  border:3px solid var(--yellow);
+  transform:scale(0);opacity:0;pointer-events:none;
+}
+#ballBurst.pop{animation:burstRing 0.5s ease forwards;}
+#ballBurst.pop-green{border-color:var(--mint);animation:burstRing 0.5s ease forwards;}
+
+/* Throw hint */
+#throwHintText{
+  font-size:0.8rem;font-weight:700;color:var(--muted);
+  margin-top:6px;
+  animation:digPulse 1.8s ease-in-out infinite;
+  transition:opacity 0.2s;
+}
+
+/* Sparkle emojis */
+.sp{
+  position:absolute;font-size:1.3rem;pointer-events:none;
+  animation:sparkle 0.75s ease forwards;
+  --tx:0px;--ty:0px;
+}
+
+/* Result panel — hidden until revealed */
+#throwResult{
+  width:100%;
+  display:none;
+  animation:popIn 0.5s cubic-bezier(.175,.885,.32,1.275);
+}
+#throwResult.show{display:block;}
+
+.res-caught{
+  background:linear-gradient(155deg,#0A2818,#0F1C2C);
+  border:2px solid rgba(6,214,160,0.45);
+  border-radius:20px;padding:22px 14px 18px;
+  text-align:center;margin-bottom:12px;
+}
+.res-escaped{
+  background:linear-gradient(155deg,#280A0A,#0F1C2C);
+  border:2px solid rgba(230,57,70,0.45);
+  border-radius:20px;padding:22px 14px 18px;
+  text-align:center;margin-bottom:12px;
+}
+.res-icon{font-size:3.5rem;display:block;margin:0 auto 8px;}
+.res-title{font-family:'Baloo 2',cursive;font-size:1.8rem;margin-bottom:5px;}
+.res-title.rt-caught {color:var(--mint);}
+.res-title.rt-escaped{color:var(--red);}
+.res-sub{font-size:0.82rem;font-weight:700;color:#8AAABB;line-height:1.6;margin-bottom:12px;}
+.res-sub .hl{color:var(--yellow);}
+
+.caught-dex-flash{
+  background:linear-gradient(270deg,rgba(255,209,102,0.2),rgba(6,214,160,0.14),rgba(76,201,240,0.16),rgba(255,209,102,0.2));
+  background-size:400% 100%;
+  animation:shimmer 2.5s linear infinite;
+  border-radius:13px;padding:11px 13px;margin-bottom:14px;
+  border:1.5px solid rgba(255,209,102,0.32);
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.cdf-pk{font-size:2.2rem;}
+.cdf-name{font-family:'Baloo 2',cursive;font-size:1.1rem;color:var(--yellow);}
+.cdf-sub{font-size:0.72rem;font-weight:700;color:var(--muted);}
+
+.hub-btn{
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,var(--yellow),#FFA500);
+  color:#1A1A00;font-family:'Baloo 2',cursive;font-size:1.2rem;
+  border:none;border-radius:17px;cursor:pointer;
+  box-shadow:0 5px 0 #B07000,0 7px 22px rgba(255,209,102,0.3);
+  transition:all 0.15s;-webkit-tap-highlight-color:transparent;
+  margin-bottom:10px;
+}
+.hub-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #B07000;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>🚄 <span class="pk">Poké</span><span class="jp">Chase</span> Japan!</h1>
+    <div class="tagline">🗾 Chase Pokémon across Japan's Shinkansen network</div>
+  </div>
+  <div id="root"></div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════
+//  DATA
+// ════════════════════════════════════════════════
+const POKEMON = [
+  {id:'pikachu',  name:'Pikachu',   emoji:'⚡', type:'Electric', rarity:'Common'},
+  {id:'eevee',    name:'Eevee',     emoji:'🦊', type:'Normal',   rarity:'Common'},
+  {id:'snorlax',  name:'Snorlax',   emoji:'🐻', type:'Normal',   rarity:'Uncommon'},
+  {id:'gengar',   name:'Gengar',    emoji:'👻', type:'Ghost',    rarity:'Uncommon'},
+  {id:'psyduck',  name:'Psyduck',   emoji:'🐥', type:'Water',    rarity:'Common'},
+  {id:'jigglypuff',name:'Jigglypuff',emoji:'🎵',type:'Fairy',    rarity:'Common'},
+  {id:'mewtwo',   name:'Mewtwo',    emoji:'🔮', type:'Psychic',  rarity:'Legendary'},
+  {id:'charizard',name:'Charizard', emoji:'🔥', type:'Fire',     rarity:'Rare'},
+  {id:'lapras',   name:'Lapras',    emoji:'🌊', type:'Water',    rarity:'Rare'},
+  {id:'bulbasaur',name:'Bulbasaur', emoji:'🌿', type:'Grass',    rarity:'Common'},
+  {id:'squirtle', name:'Squirtle',  emoji:'💧', type:'Water',    rarity:'Common'},
+  {id:'mew',      name:'Mew',       emoji:'🌸', type:'Psychic',  rarity:'Legendary'},
+];
+
+// Japan Shinkansen routes — Tokyo is the departure point, not a stop
+const ROUTES = [
+  {
+    name:'Tokaido Shinkansen',code:'Nozomi 301',emoji:'🗻',
+    departs:'Tokyo',
+    stations:['Shin-Yokohama','Nagoya','Kyoto','Shin-Osaka','Shin-Kobe'],
+  },
+  {
+    name:'Tohoku Shinkansen',code:'Hayabusa 11',emoji:'🏔️',
+    departs:'Tokyo',
+    stations:['Omiya','Sendai','Ichinoseki','Morioka','Hachinohe'],
+  },
+  {
+    name:'Hokuriku Shinkansen',code:'Kagayaki 5',emoji:'❄️',
+    departs:'Tokyo',
+    stations:['Omiya','Takasaki','Kanazawa','Toyama','Fukui'],
+  },
+  {
+    name:'Joetsu Shinkansen',code:'Toki 307',emoji:'🌊',
+    departs:'Tokyo',
+    stations:['Omiya','Kumagaya','Echigo-Yuzawa','Nagaoka','Niigata'],
+  },
+  {
+    name:'Sanyo Shinkansen',code:'Sakura 411',emoji:'🌸',
+    departs:'Shin-Osaka',
+    stations:['Shin-Kobe','Okayama','Hiroshima','Kokura','Hakata'],
+  },
+];
+
+const ALL_MIN=[0,5,10,15,20,25,30,35,40,45,50,55];
+const pad=n=>String(n).padStart(2,'0');
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function makeHC(c){const p=[];while(p.length<2){const v=rand(1,12);if(v!==c&&!p.includes(v))p.push(v);}return shuffle([c,...p]);}
+function makeMC(c){const p=[];while(p.length<2){const v=ALL_MIN[rand(0,11)];if(v!==c&&!p.includes(v))p.push(v);}return shuffle([c,...p]);}
+
+// ════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════
+let caughtSet     = new Set();   // ids of caught pokemon
+let clockMode     = null;        // persists across chases
+let selectedPk    = null;
+let route         = null;
+let stationIdx    = 0;
+let arrivals      = [];
+let step          = 'hour';      // 'hour' | 'minute'
+let chosenH       = null;
+let chosenM       = null;
+let hChoices      = [];
+let mChoices      = [];
+let isRedo        = false;
+let currentClockT = 'analogue';
+let startTime     = 0;
+let speedTimer    = null;
+let speedDots     = 10;
+let screen        = 'hub';       // 'hub' | 'chase' | 'throw'
+let stationsVisited  = 0;
+
+// ════════════════════════════════════════════════
+//  CLOCK RENDERERS
+// ════════════════════════════════════════════════
+function analogueClock(hour,minute,hl){
+  const minDeg =(minute/60)*360;
+  const hourDeg=(((hour%12)+minute/60)/12)*360;
+  const hCol=hl==='hour'   ?'#EF7C5A':'rgba(240,248,255,0.88)';
+  const mCol=hl==='minute' ?'#4CC9F0':'rgba(140,180,220,0.8)';
+  const hub =hl==='hour'   ?'#EF7C5A':hl==='minute'?'#4CC9F0':'#C8D8E8';
+  const hG  =hl==='hour'   ?'hh-g':'';
+  const mG  =hl==='minute' ?'mh-g':'';
+  let ticks='',nums='';
+  for(let i=0;i<60;i++){
+    const maj=i%5===0,a=i/60*360*(Math.PI/180),r1=maj?82:87,r2=90;
+    ticks+=`<line x1="${100+r1*Math.sin(a)}" y1="${100-r1*Math.cos(a)}" x2="${100+r2*Math.sin(a)}" y2="${100-r2*Math.cos(a)}" stroke="${maj?'rgba(220,235,255,0.8)':'rgba(100,140,190,0.35)'}" stroke-width="${maj?2.5:1.2}" stroke-linecap="round"/>`;
+  }
+  for(let i=1;i<=12;i++){
+    const a=i/12*360*(Math.PI/180),r=72;
+    nums+=`<text x="${100+r*Math.sin(a)}" y="${100-r*Math.cos(a)+5}" text-anchor="middle" font-family="Baloo 2,cursive" font-weight="800" font-size="13" fill="rgba(220,235,255,0.92)">${i}</text>`;
+  }
+  // Minute markers OUTSIDE the face at the 3, 6 and 9 positions.
+  // Sky-blue to match the minute hand; they brighten during the minutes step.
+  const minLblOn = hl==='minute';
+  const minLblStyle = `font-family="Baloo 2,cursive" font-weight="800" font-size="14" text-anchor="middle" fill="#4CC9F0" opacity="${minLblOn?1:0.6}"${minLblOn?' style="filter:drop-shadow(0 0 4px #4CC9F0)"':''}`;
+  const minLabels = `
+    <text x="100" y="-9" ${minLblStyle}>0</text>
+    <text x="214" y="105" ${minLblStyle}>15</text>
+    <text x="100" y="219" ${minLblStyle}>30</text>
+    <text x="-14" y="105" ${minLblStyle}>45</text>`;
+  return `<div class="analogue-wrap">
+    <svg class="clock-face" viewBox="-28 -28 256 256" xmlns="http://www.w3.org/2000/svg">
+      <defs><radialGradient id="cg" cx="50%" cy="45%"><stop offset="0%" stop-color="#102030"/><stop offset="100%" stop-color="#06111E"/></radialGradient></defs>
+      <circle cx="100" cy="100" r="97" fill="url(#cg)" stroke="rgba(76,201,240,0.25)" stroke-width="3"/>
+      ${ticks}${nums}${minLabels}
+      <!-- Hour hand: short and thick (reaches ~half way to the numbers) -->
+      <g transform="rotate(${hourDeg},100,100)"><g class="${hG}"><line x1="100" y1="108" x2="100" y2="58" stroke="${hCol}" stroke-width="8" stroke-linecap="round"/></g></g>
+      <!-- Minute hand: long and thin (reaches the minute ticks) -->
+      <g transform="rotate(${minDeg},100,100)"><g class="${mG}"><line x1="100" y1="112" x2="100" y2="20" stroke="${mCol}" stroke-width="4.5" stroke-linecap="round"/></g></g>
+      <circle cx="100" cy="100" r="7" fill="${hub}"/>
+      <circle cx="100" cy="100" r="3.5" fill="#06111E"/>
+    </svg>
+  </div>`;
+}
+
+function digitalClock(hour,minute,hl){
+  const hC=hl==='hour'?'gh':hl==='minute'?'dim':'';
+  const mC=hl==='minute'?'gm':hl==='hour'?'dim':'';
+  return `<div class="digital-wrap">
+    <div class="digital-display">
+      <span class="ds ${hC}">${pad(hour)}</span>
+      <span class="dc">:</span>
+      <span class="ds ${mC}">${pad(minute)}</span>
+    </div>
+  </div>`;
+}
+
+function getClock(hl){
+  const a=arrivals[stationIdx];
+  return currentClockT==='analogue'?analogueClock(a.hour,a.minute,hl):digitalClock(a.hour,a.minute,hl);
+}
+
+// (ballSVG inlined directly in renderThrow)
+
+// ════════════════════════════════════════════════
+//  SPEED TIMER
+// ════════════════════════════════════════════════
+function startSpeedTimer(){
+  speedDots=10; startTime=Date.now();
+  clearInterval(speedTimer);
+  speedTimer=setInterval(()=>{
+    const e=(Date.now()-startTime)/1000;
+    speedDots=Math.max(0,10-Math.floor(e/2));
+    const el=document.getElementById('sdots');
+    if(el) updateDots(el);
+    if(speedDots===0) clearInterval(speedTimer);
+  },400);
+}
+function stopSpeedTimer(){clearInterval(speedTimer);}
+function updateDots(el){
+  el.innerHTML=Array.from({length:10},(_,i)=>{
+    let c=i<speedDots?(speedDots<4?'warn':''):'dim';
+    return `<div class="sdot ${c}"></div>`;
+  }).join('');
+}
+function calcCatchRate(){
+  const e=(Date.now()-startTime)/1000;
+  if(e<5) return 0.94; if(e<10) return 0.78;
+  if(e<15) return 0.58; if(e<20) return 0.38;
+  if(e<25) return 0.22; return 0.10;
+}
+
+// ════════════════════════════════════════════════
+//  GAME SETUP
+// ════════════════════════════════════════════════
+function startChase(){
+  if(!selectedPk||!clockMode) return;
+  route=ROUTES[rand(0,ROUTES.length-1)];
+  stationIdx=0;
+  arrivals=route.stations.map(()=>({hour:rand(1,12),minute:ALL_MIN[rand(0,11)]}));
+  stationsVisited=0;
+  initStation();
+  screen='chase';
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function initStation(){
+  const a=arrivals[stationIdx];
+  hChoices=makeHC(a.hour);
+  mChoices=makeMC(a.minute);
+  step='hour'; chosenH=null; chosenM=null; isRedo=false;
+  currentClockT=clockMode==='both'?(Math.random()<0.5?'analogue':'digital'):clockMode;
+  startSpeedTimer();
+}
+
+// ════════════════════════════════════════════════
+//  SCREENS
+// ════════════════════════════════════════════════
+
+/* ── HUB ── */
+function renderHub(){
+  const avail=POKEMON.filter(p=>!caughtSet.has(p.id));
+  const total=POKEMON.length, cnt=caughtSet.size;
+
+  /* Pokédex grid */
+  const dexGrid=POKEMON.map(p=>{
+    const isCaught=caughtSet.has(p.id);
+    if(isCaught){
+      return `<div class="dex-slot caught-slot" title="${p.name}">
+        ${p.emoji}
+        <div class="caught-badge">✓</div>
+      </div>`;
+    }
+    return `<div class="dex-slot empty-slot" title="???">
+      <div class="dex-ball"></div>
+    </div>`;
+  }).join('');
+
+  /* Pokémon pick grid */
+  const pkGrid=POKEMON.map(p=>{
+    const caught=caughtSet.has(p.id);
+    const sel=selectedPk===p.id;
+    return `<button class="pk-btn ${sel?'selected':''} ${caught?'already-caught':''}"
+      onclick="${caught?'':(`selectPk('${p.id}')`)}" ${caught?'disabled':''}>
+      <div class="pk-em">${p.emoji}</div>
+      <div class="pk-nm">${p.name}</div>
+      <div class="pk-tp">${p.type} · ${p.rarity}</div>
+    </button>`;
+  }).join('');
+
+  const allCaught=cnt>=total;
+
+  return `<div class="hub-screen">
+    <div class="story-banner">
+      <span class="sb-icon">🔮</span>
+      <h2>Pokémon spotted on the Shinkansen!</h2>
+      <p>Wild Pokémon are riding Japan's bullet trains!
+      They boarded at the <span class="hl">departure station</span> and are already on their way.
+      Your <span class="hl">Time Machine</span> can warp you to the next arrival —
+      but you must <span class="hlr">read the station clock</span> to get the time right.
+      Move fast — the longer you take, the lower your catch chance!</p>
+    </div>
+
+    <div class="caught-box card">
+      <div class="caught-box-title">🗂️ Pokédex — Caught Pokémon<span class="cb-count">${cnt}/${total}</span></div>
+      <div class="pokedex-grid">${dexGrid}</div>
+    </div>
+
+    ${allCaught
+      ? `<div class="card glow-mint" style="text-align:center;padding:22px 16px;">
+          <div style="font-size:3.5rem;margin-bottom:8px;animation:wobble 2s ease-in-out infinite">🏆</div>
+          <div style="font-family:'Baloo 2',cursive;font-size:1.4rem;color:var(--mint)">All Pokémon Caught!</div>
+          <div style="font-size:0.82rem;font-weight:700;color:var(--muted);margin-top:6px">You're a Pokémon Master! 🎉</div>
+          <button class="hub-btn" style="margin-top:16px;margin-bottom:0" onclick="resetAll()">🔄 Start Fresh</button>
+        </div>`
+      : `
+    <div class="pick-label">🎯 Which Pokémon are you chasing?</div>
+    <div class="pokemon-scroll">${pkGrid}</div>
+
+    <div class="pick-label">🕐 Clock style</div>
+    <div class="clock-row">
+      ${[['analogue','🕰️','Analogue','Hands'],['digital','📟','Digital','Numbers'],['both','⏱️','Mixed','Surprise']].map(([m,ic,nm,ds])=>`
+        <button class="ck-btn ${clockMode===m?'selected':''}" onclick="selectClock('${m}')">
+          <div class="ck-ic">${ic}</div>
+          <div class="ck-nm">${nm}</div>
+          <div class="ck-ds">${ds}</div>
+        </button>`).join('')}
+    </div>
+    <button class="go-btn" onclick="startChase()" ${selectedPk&&clockMode?'':'disabled'}>
+      🚄 Board the Time Machine!
+    </button>`}
+  </div>`;
+}
+
+/* ── JOURNEY MAP ── */
+function renderMap(){
+  const pk=POKEMON.find(p=>p.id===selectedPk);
+  let html=`<div class="journey-card">
+    <div class="jc-header">🗺️ <span class="jc-train">${route.code} · ${route.name}</span> ${route.emoji} — ${pk.emoji} ${pk.name} is on board</div>
+    <div class="station-row">`;
+  route.stations.forEach((nm,i)=>{
+    const cls=i<stationIdx?'past':i===stationIdx?'current':'';
+    const nc=i===stationIdx?'cur':'';
+    const short=nm.split('-').pop().split(' ')[0];
+    html+=`<div class="station-node">
+      <div class="station-dot ${cls}"></div>
+      <div class="stn-name ${nc}">${short}</div>
+    </div>`;
+    if(i<route.stations.length-1){
+      html+=`<div class="station-line ${i<stationIdx?'past':''}"></div>`;
+    }
+  });
+  html+=`</div></div>`;
+  return html;
+}
+
+/* ── INTEL ── */
+function renderIntel(){
+  const a=arrivals[stationIdx];
+  const stn=route.stations[stationIdx];
+  const prev=stationIdx>0?route.stations[stationIdx-1]:`${route.departs} (departure)`;
+  return `<div class="intel-card">
+    <div class="intel-title">📡 Time Machine Intelligence Report</div>
+    <div class="intel-row"><span class="il">Train</span><span class="iv sk">${route.code} — ${route.name}</span></div>
+    <div class="intel-row"><span class="il">Arriving At</span><span class="iv ye">📍 ${stn}</span></div>
+    <div class="intel-row"><span class="il">From</span><span class="iv">${prev}</span></div>
+    <div class="intel-row"><span class="il">Clock</span><span class="iv">${currentClockT==='analogue'?'🕰️ Analogue':'📟 Digital'}</span></div>
+  </div>`;
+}
+
+/* ── CHASE ── */
+function renderChase(){
+  const hl=step==='hour'?'hour':'minute';
+  const hp=step==='hour'?'ah':'dn';
+  const mp=step==='minute'?'am':'';
+  const choices=step==='hour'
+    ? `${isRedo?'<div class="redo-hint">🔄 Try the hour again!</div>':''}
+       <div class="choices-prompt">What <span class="hlh">hour</span> does the train arrive? 🔴</div>
+       <div class="choice-grid">${hChoices.map(v=>`<button class="chip" onclick="pickH(${v})"><div class="cv">${v}</div><div class="cs">o'clock</div></button>`).join('')}</div>`
+    : `${isRedo?'<div class="redo-hint">🔄 Try the minutes again!</div>':''}
+       <div class="choices-prompt">What are the <span class="hlm">minutes</span>? 🔵</div>
+       <div class="choice-grid">${mChoices.map(v=>`<button class="chip" onclick="pickM(${v})"><div class="cv">${pad(v)}</div><div class="cs">min</div></button>`).join('')}</div>`;
+
+  return `<div class="chase-screen">
+    ${renderMap()}
+    ${renderIntel()}
+    <div class="clock-card">
+      <div class="ctl">⏱️ Read the station arrival clock</div>
+      <div class="step-pills">
+        <div class="step-pill ${hp}">1️⃣ Hour</div>
+        <div class="step-pill ${mp}">2️⃣ Minutes</div>
+      </div>
+      ${getClock(hl)}
+    </div>
+    <div class="speed-dots" id="sdots">${Array.from({length:10},()=>'<div class="sdot"></div>').join('')}</div>
+    <div class="choices-sec">${choices}</div>
+  </div>`;
+}
+
+/* ── WRONG ── */
+function renderWrong(){
+  const pk=POKEMON.find(p=>p.id===selectedPk);
+  const a=arrivals[stationIdx];
+  const isLast=stationIdx>=route.stations.length-1;
+  const next=!isLast?route.stations[stationIdx+1]:'';
+  return `<div class="chase-screen">
+    ${renderMap()}
+    <div class="wrong-card">
+      <div class="we">${pk.emoji}</div>
+      <h3>❌ Wrong time — ${pk.name} saw you!</h3>
+      <p>The Time Machine mis-fired. ${pk.name} spotted you on the platform and leapt back on the train!</p>
+      <div class="ct">Correct: <span class="rh">${pad(a.hour)}</span>:<span class="rm">${pad(a.minute)}</span></div>
+      <p>${isLast?`No more stops — ${pk.name} escaped Japan!`:`${pk.name} is heading to <strong style="color:var(--yellow)">${next}</strong>!`}</p>
+      <button class="continue-btn" onclick="${isLast?'endChase(false)':('nextStn()')}">
+        ${isLast?'😢 Give up chase':'🚄 Chase to '+next+'!'}
+      </button>
+    </div>
+  </div>`;
+}
+
+/* ── THROW SCREEN: arena + inline result, no mid-animation re-render ── */
+function renderThrow(){
+  const pk=POKEMON.find(p=>p.id===selectedPk);
+  const a=arrivals[stationIdx];
+  const stn=route.stations[stationIdx];
+  return `<div class="throw-screen">
+    <div class="throw-arena" id="throwArena">
+      <div class="arena-top">
+        <div class="arena-loc">📍 ${stn} Station Platform</div>
+        <div class="arena-stn">${route.code} arrived · ${pad(a.hour)}:${pad(a.minute)}</div>
+      </div>
+      <span id="throwPk" class="pk-float">${pk.emoji}</span>
+      <div style="text-align:center;padding-bottom:4px">
+        <div id="pkNameLabel" style="font-family:'Baloo 2',cursive;font-size:1rem;color:var(--yellow);margin-bottom:10px">${pk.name} appeared!</div>
+        <div id="throwBallWrap" onclick="doThrow()" style="cursor:pointer;display:inline-block;position:relative;width:64px;height:64px">
+          <svg id="throwBallSvg" width="64" height="64" viewBox="0 0 58 58" xmlns="http://www.w3.org/2000/svg" style="display:block">
+            <circle cx="29" cy="29" r="27" fill="#D00" stroke="#111" stroke-width="2"/>
+            <path d="M2 29 A27 27 0 0 1 56 29" fill="#F5F5F5"/>
+            <rect x="2" y="26.5" width="54" height="5" fill="#111"/>
+            <circle cx="29" cy="29" r="9" fill="white" stroke="#111" stroke-width="2"/>
+            <circle cx="29" cy="29" r="5" fill="#F5F5F5" stroke="#555" stroke-width="1.5"/>
+            <circle cx="24" cy="23" r="3" fill="rgba(255,255,255,0.32)"/>
+          </svg>
+          <div id="ballBurst" style="position:absolute;inset:0;border-radius:50%;border:3px solid var(--yellow);transform:scale(0);opacity:0;pointer-events:none"></div>
+        </div>
+        <div id="throwHintText" style="font-size:0.8rem;font-weight:700;color:var(--muted);margin-top:8px;animation:digPulse 1.8s ease-in-out infinite">Tap the Poké Ball to throw! 🎯</div>
+      </div>
+    </div>
+    <div id="throwResult" style="display:none;width:100%"></div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════
+//  ACTIONS
+// ════════════════════════════════════════════════
+function selectPk(id){
+  if(caughtSet.has(id)) return;
+  selectedPk=id; render();
+}
+function selectClock(m){clockMode=m; render();}
+
+function pickH(v){
+  const a=arrivals[stationIdx];
+  if(v===a.hour){step='minute';isRedo=false;render();}
+  else{
+    flashChips(hChoices.indexOf(v));
+    setTimeout(()=>{isRedo=true;hChoices=makeHC(a.hour);step='hour';render();},650);
+  }
+}
+
+function pickM(v){
+  const a=arrivals[stationIdx];
+  stopSpeedTimer();
+  if(v===a.minute){
+    stationsVisited++;
+    screen='throw';
+    render();
+    // Kick off the ball animation after DOM settles
+    requestAnimationFrame(()=>requestAnimationFrame(initThrowScreen));
+  } else {
+    flashChips(mChoices.indexOf(v));
+    setTimeout(()=>{isRedo=true;mChoices=makeMC(a.minute);step='minute';render();},650);
+  }
+}
+
+function flashChips(wrongIdx){
+  document.querySelectorAll('.chip').forEach((c,i)=>{
+    c.classList.add('locked');
+    if(i===wrongIdx) c.style.cssText='border-color:var(--red);background:rgba(230,57,70,0.18);animation:chipShake 0.45s ease';
+  });
+}
+
+/* ── THROW SCREEN LOGIC ──
+   All animation runs inside the already-rendered DOM.
+   No render() calls until the user taps a button.
+   Steps:
+     1. Ball idles, waiting for tap (doThrow)
+     2. Ball arcs toward Pokémon (CSS keyframe via inline style)
+     3. Ball wiggles 3 times (1.5s suspense)
+     4. Result: caught → Pokémon shrinks + sparkles + ball stays closed
+              escaped → Pokémon flies off + ball opens
+     5. Result panel fades in below arena with correct action button
+*/
+let throwReady=true;
+
+function initThrowScreen(){
+  throwReady=true;
+  // Ball starts at bottom, idle
+  const wrap=document.getElementById('throwBallWrap');
+  if(wrap) wrap.style.cssText='cursor:pointer;display:inline-block;position:relative;width:64px;height:64px;transition:transform 0.1s';
+}
+
+function doThrow(){
+  if(!throwReady) return;
+  throwReady=false;
+
+  const hint=document.getElementById('throwHintText');
+  const wrap=document.getElementById('throwBallWrap');
+  const pk=document.getElementById('throwPk');
+  const burst=document.getElementById('ballBurst');
+  const nameLabel=document.getElementById('pkNameLabel');
+  if(!wrap||!pk) return;
+
+  // Hide hint
+  // The pulse animation drives opacity, so stop it before hiding
+  if(hint){ hint.style.animation='none'; hint.style.visibility='hidden'; }
+  wrap.style.cursor='default';
+
+  // Determine outcome NOW (before animation) so we can animate accordingly
+  const catchRate=calcCatchRate();
+  const success=Math.random()<catchRate;
+
+  // ── Phase 1: Arc the ball up toward the Pokémon (600ms) ──
+  wrap.style.transition='transform 0.6s cubic-bezier(0.2,0,0.4,1)';
+  wrap.style.transform='translateY(-130px) rotate(360deg) scale(1.15)';
+
+  setTimeout(()=>{
+    // ── Phase 2: Ball lands/settles (200ms) ──
+    wrap.style.transition='transform 0.2s ease';
+    wrap.style.transform='translateY(-120px) rotate(380deg) scale(0.95)';
+
+    // Pokémon starts to react
+    pk.className=''; // remove float
+
+    setTimeout(()=>{
+      // ── Phase 3: Wiggle x3 — suspense (1400ms total) ──
+      // Pop burst ring
+      burst.style.transition='none';
+      burst.style.transform='scale(0)';
+      burst.style.opacity='1';
+      burst.style.borderColor='var(--yellow)';
+      void burst.offsetWidth;
+      burst.style.transition='transform 0.45s ease,opacity 0.45s ease';
+      burst.style.transform='scale(3)';
+      burst.style.opacity='0';
+
+      // Wiggle the ball inline
+      let wigCount=0;
+      function wiggle(){
+        if(wigCount>=3){ afterWiggle(); return; }
+        wigCount++;
+        wrap.style.transition='transform 0.22s ease';
+        wrap.style.transform=`translateY(-120px) rotate(${390+wigCount*8}deg) scale(0.95)`;
+        setTimeout(()=>{
+          wrap.style.transform=`translateY(-120px) rotate(${382+wigCount*8}deg) scale(0.95)`;
+          setTimeout(wiggle,220);
+        },220);
+      }
+      wiggle();
+
+      function afterWiggle(){
+        if(success){
+          // ── CAUGHT ──
+          // Pokémon absorbed into ball
+          pk.style.transition='transform 0.5s ease, opacity 0.5s ease';
+          pk.style.transform='scale(0)';
+          pk.style.opacity='0';
+          if(nameLabel) nameLabel.style.opacity='0';
+
+          // Green burst
+          setTimeout(()=>{
+            burst.style.transition='none';
+            burst.style.transform='scale(0)';
+            burst.style.opacity='1';
+            burst.style.borderColor='var(--mint)';
+            void burst.offsetWidth;
+            burst.style.transition='transform 0.5s ease,opacity 0.5s ease';
+            burst.style.transform='scale(3.5)';
+            burst.style.opacity='0';
+
+            // Spawn sparkles
+            spawnSparkles(document.getElementById('throwArena'));
+
+            // Ball settles down
+            wrap.style.transition='transform 0.5s cubic-bezier(0.34,1.56,0.64,1)';
+            wrap.style.transform='translateY(0) rotate(720deg) scale(1)';
+
+            // Register catch
+            caughtSet.add(selectedPk);
+            const pkData=POKEMON.find(p=>p.id===selectedPk);
+            const allDone=caughtSet.size>=POKEMON.length;
+
+            // Reveal result panel after ball settles
+            setTimeout(()=>showResult(true, pkData, allDone), 800);
+          },300);
+
+        } else {
+          // ── ESCAPED ──
+          // Ball opens (swap SVG to open version)
+          const svg=document.getElementById('throwBallSvg');
+          if(svg) svg.innerHTML=`
+            <path d="M 5 29 A 24 24 0 0 1 53 29" fill="#D00" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+            <line x1="2" y1="29" x2="56" y2="29" stroke="#111" stroke-width="2.5"/>
+            <circle cx="29" cy="29" r="8" fill="white" stroke="#111" stroke-width="2"/>`;
+
+          // Ball drops
+          wrap.style.transition='transform 0.6s ease, opacity 0.4s ease';
+          wrap.style.transform='translateY(20px) rotate(400deg) scale(0.8)';
+          wrap.style.opacity='0.35';
+
+          // Pokémon escapes upward
+          pk.style.transition='none';
+          pk.className='';
+          setTimeout(()=>{
+            pk.style.transition='transform 0.8s ease, opacity 0.8s ease';
+            pk.style.transform='translateY(-80px) scale(0.3)';
+            pk.style.opacity='0';
+            if(nameLabel){ nameLabel.textContent='It broke free! 💨'; nameLabel.style.color='var(--red)'; }
+          },100);
+
+          const pkData=POKEMON.find(p=>p.id===selectedPk);
+          setTimeout(()=>{
+            // Move to next station or end
+            if(stationIdx<route.stations.length-1){
+              showResult(false, pkData, false, true); // hasNextStation=true
+            } else {
+              showResult(false, pkData, false, false);
+            }
+          },1000);
+        }
+      }
+    },500);
+  },600);
+}
+
+function spawnSparkles(arena){
+  if(!arena) return;
+  const sparks=['✨','⭐','💫','🌟','🎇'];
+  for(let i=0;i<10;i++){
+    setTimeout(()=>{
+      const s=document.createElement('div');
+      s.className='sp';
+      const tx=(Math.random()-0.5)*180;
+      const ty=(Math.random()-0.5)*120-30;
+      s.style.cssText=`left:${30+Math.random()*40}%;top:${20+Math.random()*40}%;--tx:${tx}px;--ty:${ty}px;animation-delay:${i*0.05}s;z-index:10`;
+      s.textContent=sparks[Math.floor(Math.random()*sparks.length)];
+      arena.appendChild(s);
+      setTimeout(()=>s.remove(),1000);
+    },i*55);
+  }
+}
+
+function showResult(success, pkData, allDone, hasNextStation){
+  const panel=document.getElementById('throwResult');
+  if(!panel) return;
+  panel.style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  if(success){
+    panel.innerHTML=`
+      <div class="res-caught">
+        <span class="res-icon">🔴</span>
+        <div class="res-title rt-caught">🎉 Gotcha!</div>
+        <p class="res-sub">${pkData.name} was caught at <span class="hl">${route.stations[stationIdx]}</span>!<br/>
+        Tracked down in ${stationsVisited} station${stationsVisited!==1?'s':''}.</p>
+        <div class="caught-dex-flash">
+          <span class="cdf-pk">${pkData.emoji}</span>
+          <div>
+            <div class="cdf-name">${pkData.name} added to Pokédex!</div>
+            <div class="cdf-sub">${pkData.type} type · ${pkData.rarity}</div>
+          </div>
+        </div>
+      </div>
+      ${allDone?`<div class="card glow-mint" style="text-align:center;padding:18px;margin-bottom:12px">
+        <div style="font-size:2.5rem;animation:wobble 2s ease-in-out infinite">🏆</div>
+        <div style="font-family:'Baloo 2',cursive;color:var(--mint);font-size:1.2rem;margin-top:6px">All Pokémon Caught! You're a Master!</div>
+      </div>`:''}
+      <button class="hub-btn" onclick="goHub()">${allDone?'🏆 View Pokédex':'🎯 Back to Hunt!'}</button>`;
+  } else {
+    const isLast=stationIdx>=route.stations.length-1;
+    const nextStnName=!isLast?route.stations[stationIdx+1]:'';
+    panel.innerHTML=`
+      <div class="res-escaped">
+        <span class="res-icon">💨</span>
+        <div class="res-title rt-escaped">${isLast?'It escaped…':'It broke free!'}</div>
+        <p class="res-sub">${pkData.name} burst out of the ball${isLast?` and escaped Japan after ${stationsVisited} station${stationsVisited!==1?'s':''}!`:` and jumped back on the train to <span class="hl">${nextStnName}</span>!`}</p>
+      </div>
+      ${isLast
+        ? `<button class="hub-btn" onclick="goHub()">🔄 Try Again!</button>`
+        : `<button class="hub-btn" onclick="chaseNext()">🚄 Chase to ${nextStnName}!</button>
+           <button style="width:100%;padding:12px;background:transparent;color:var(--muted);font-family:'Baloo 2',cursive;font-size:0.95rem;border:1.5px solid rgba(255,255,255,0.1);border-radius:14px;cursor:pointer;margin-top:0" onclick="goHub()">Give up chase</button>`
+      }`;
+  }
+}
+
+function chaseNext(){
+  stationIdx++;
+  screen='chase'; initStation(); render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function nextStn(){
+  chaseNext();
+}
+
+function endChase(didCatch){
+  if(didCatch) caughtSet.add(selectedPk);
+  // Handled by showResult now
+}
+
+function goHub(){
+  selectedPk=null;
+  route=null; stationIdx=0; arrivals=[];
+  step='hour'; chosenH=null; chosenM=null;
+  hChoices=[]; mChoices=[]; isRedo=false;
+  screen='hub'; stationsVisited=0;
+  throwReady=true;
+  stopSpeedTimer();
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetAll(){
+  caughtSet=new Set();
+  clockMode=null;
+  goHub();
+}
+
+// ════════════════════════════════════════════════
+//  RENDER
+// ════════════════════════════════════════════════
+// Freshly drawn chips appear right under the pointer that just tapped,
+// so suppress hover styling until the pointer actually moves away.
+let chipHoverListener=null;
+function armChipHover(){
+  if(chipHoverListener) document.removeEventListener('pointermove',chipHoverListener);
+  const grid=document.querySelector('.choice-grid');
+  if(!grid) return;
+  grid.classList.add('no-hover');
+  let sx=null, sy=null;
+  chipHoverListener=e=>{
+    if(sx===null){ sx=e.clientX; sy=e.clientY; return; }
+    if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>12){
+      grid.classList.remove('no-hover');
+      document.removeEventListener('pointermove',chipHoverListener);
+      chipHoverListener=null;
+    }
+  };
+  document.addEventListener('pointermove',chipHoverListener);
+}
+
+function render(){
+  const root=document.getElementById('root');
+  if(document.activeElement && document.activeElement.blur) document.activeElement.blur();
+  switch(screen){
+    case 'hub':   root.innerHTML=renderHub();   break;
+    case 'throw': root.innerHTML=renderThrow(); break;
+    case 'chase':
+      root.innerHTML=renderChase();
+      const el=document.getElementById('sdots');
+      if(el) updateDots(el);
+      armChipHover();
+      break;
+  }
+}
+
+render();
+</script>
+</body>
+</html>
